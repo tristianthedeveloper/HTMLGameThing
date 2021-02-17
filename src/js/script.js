@@ -3,7 +3,7 @@ class Point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-    } 
+    }
 }
 class Dimension {
 
@@ -11,7 +11,7 @@ class Dimension {
         this.width = width;
         this.height = height;
     }
-    
+
     /**
      * 
      * @param {Point} point 
@@ -37,12 +37,13 @@ const Game = {
     canvas: document.createElement("canvas"),
     components: [],
     start: function () {
-        this.canvas.width = 480;
-        this.canvas.height = 270;
+        this.canvas.width = 1000;
+        this.canvas.height = 1000;
         this.size = new Dimension(this.width, this.height);
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
+        setupRenderingContext(this.getContext());
     },
     clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -77,7 +78,7 @@ function component(width, height, color, location, redraw = undefined) {
     this.width = width;
     this.height = height;
     this.color = color;
-
+    
     this.location = location;
 
     /**
@@ -85,7 +86,15 @@ function component(width, height, color, location, redraw = undefined) {
      */
     this.redraw = redraw || function (ctx) {
         ctx.fillStyle = this.color;
+
         ctx.fillRect(this.location.x, this.location.y, this.width, this.height);
+    }
+
+    /**
+     * @returns {Location} the location of this component.
+     */
+    this.getLocation = function () {
+        return this.location;
     }
 
 }
@@ -112,15 +121,17 @@ function startGame() {
      * @param {CanvasRenderingContext2D} ctx 
      */
     componentOne.redraw = function (ctx) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.location.x, this.location.y, this.width, this.height);
+        var renderer = Renderer.begin();
+        renderer.setStrokeStyle("red");
+        renderer.drawCircle(this.location.x, this.location.y, 50);
+        renderer.drawLine(this.location.x, this.location.y, this.location.x, this.location.y + 20);
     }
 
     Game.addComponent(componentOne);
 
     Game.canvas.addEventListener("tickevent", e => {
 
-        componentOne.location.x += 1;
+        // componentOne.location.x += 1;
 
     });
 
